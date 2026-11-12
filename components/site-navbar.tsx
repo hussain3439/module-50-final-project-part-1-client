@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
+import { usePathname, useRouter } from "next/navigation"
 import { MenuIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -19,6 +19,7 @@ import { cn } from "cn"
 import Image from "next/image"
 
 import LogoImage from "@/app/assets/logo.png"
+import { signOut, useSession } from "@/lib/auth-client"
 
 const navLinks = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -37,6 +38,21 @@ function isActivePath(pathname: string, href: string) {
 
 export function SiteNavbar() {
   const pathname = usePathname()
+  const router = useRouter()
+
+  const { data: session, isPending } = useSession()
+  const user = session?.user
+  console.log(user?.name)
+
+  const handleSignOut = async () => {
+    await signOut({
+  fetchOptions: {
+    onSuccess: () => {
+      router.push("/login"); // redirect to login page
+    },
+  },
+});
+  }
 
   return (
     <header
@@ -76,21 +92,34 @@ export function SiteNavbar() {
               orientation="vertical"
               className="mx-2 h-5 bg-white/20"
             />
-            <Link
-              href="/sign-in"
-              className={cn(navLinkBase, "font-medium text-[#9d8bff]")}
-            >
-              Sign In
-            </Link>
           </nav>
+          {user ? (
+            <div className="flex items-center gap-3">
+              <div className="text-white">{user.name}</div>
 
-          <Button
-            render={<Link href="/sign-up" />}
-            size="lg"
-            className="ms-2 hidden bg-[#7a5af8] font-medium text-white hover:bg-[#6d4ff0] md:inline-flex"
-          >
-            Sign Up
-          </Button>
+              <Button
+                onClick={handleSignOut}
+                className="bg-red-500 text-white hover:bg-red-600"
+              >
+                Sign Out
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2">
+              <Link
+                href="/sign-in"
+                className={cn(navLinkBase, "font-medium text-[#9d8bff]")}
+              >
+                Sign In
+              </Link>
+<Link
+  href="/sign-up"
+  className="hidden md:inline-flex items-center justify-center rounded-md bg-[#7a5af8] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#6d4ff0]"
+>
+  Sign Up
+</Link>
+            </div>
+          )}
 
           {/* Mobile version*/}
           <Sheet>

@@ -6,6 +6,7 @@ import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signIn } from "@/lib/auth-client"
 import { redirect } from "next/navigation";
+import { toast } from "sonner";
 
 type SignInFormData = {
   email: string
@@ -33,10 +34,12 @@ const SignInPage = () => {
       })
 
       if (error) {
+        toast.error('Sign in failed!')
         console.log(error.message)
         return
       }
       if(data){
+        toast.success('Sign in successfully')
         redirect('/')
       }
       console.log("Signup successful:", data)

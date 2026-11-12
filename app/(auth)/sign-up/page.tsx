@@ -6,13 +6,17 @@ import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { signUp } from "@/lib/auth-client"
+import { toast } from "sonner"
 
 type SignUpFormData = {
   name: string
   email: string
   image: string
   password: string
+  role: "seeker" | "recruiter" | "admin"
 }
+
+const roles = ["seeker", "recruiter", "admin"] as const
 
 const inputClasses =
   "h-10 w-full rounded-lg border border-white/10 bg-white/[0.03] text-sm text-white outline-none transition-colors placeholder:text-neutral-500 focus-visible:border-[#7a5af8]/60 focus-visible:ring-2 focus-visible:ring-[#7a5af8]/25"
@@ -36,15 +40,20 @@ export default function SignUpForm() {
         email: userData.email,
         password: userData.password,
         image: userData.image || undefined,
+        role: userData.role,
         callbackURL: "/",
       })
 
       if (error) {
+              toast.error('Sign up failed!')
         console.log(error.message)
         return
       }
 
       console.log("Signup successful:", data)
+      if(data){
+        toast.success('Sign up successfully!')
+      }
 
     
     } catch (error) {
@@ -79,6 +88,28 @@ export default function SignUpForm() {
               placeholder="John Doe"
               className={inputClasses + " pl-9"}
             />
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <span className="block text-xs font-medium text-neutral-300">
+            I am registering as
+          </span>
+          <div className="flex gap-2" role="radiogroup" aria-label="Account type">
+            {roles.map((role) => (
+              <label key={role} className="relative flex-1 cursor-pointer">
+                <input
+                  type="radio"
+                  name="role"
+                  value={role}
+                  defaultChecked={role === "seeker"}
+                  className="peer sr-only"
+                />
+                <span className="flex h-10 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-sm capitalize text-neutral-400 transition-colors peer-checked:border-[#7a5af8]/60 peer-checked:bg-[#7a5af8]/15 peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-[#7a5af8]/25">
+                  {role}
+                </span>
+              </label>
+            ))}
           </div>
         </div>
 
