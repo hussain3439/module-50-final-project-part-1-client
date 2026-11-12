@@ -1,0 +1,191 @@
+"use client"
+
+import * as React from "react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { MenuIcon } from "lucide-react"
+
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet"
+import { cn } from "cn"
+
+const navLinks = [
+  { label: "Browse Jobs", href: "/jobs" },
+  { label: "Company", href: "/company" },
+  { label: "Pricing", href: "/pricing" },
+]
+
+const navLinkBase =
+  "rounded-lg px-3 py-2 text-sm text-neutral-300 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/50"
+
+function isActivePath(pathname: string, href: string) {
+  return href === "/"
+    ? pathname === href
+    : pathname === href || pathname.startsWith(`${href}/`)
+}
+
+function LoopMark(props: React.ComponentProps<"svg">) {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={3}
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74" stroke="#3b82f6" />
+      <path d="M21 3v5h-5M17.74 5.74 21 8" stroke="#f97316" />
+    </svg>
+  )
+}
+
+function Logo({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof Link>, "href">) {
+  return (
+    <Link
+      href="/"
+      aria-label="Hireloop home"
+      data-slot="navbar-logo"
+      className={cn(
+        "flex items-center text-xl font-bold tracking-tight",
+        className
+      )}
+      {...props}
+    >
+      <span className="text-[#3b82f6]">hire</span>
+      <LoopMark className="size-5" />
+      <span className="text-[#f97316]">loop</span>
+    </Link>
+  )
+}
+
+export function SiteNavbar() {
+  const pathname = usePathname()
+
+  return (
+    <header
+      data-slot="navbar"
+      className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#191919]"
+    >
+      <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+        <Logo />
+
+        {/* Desktop */}
+        <div className="flex items-center justify-end">
+          <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
+            {navLinks.map((link) => {
+              const active = isActivePath(pathname, link.href)
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    navLinkBase,
+                    active && "bg-white/10 text-white"
+                  )}
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
+            <Separator
+              orientation="vertical"
+              className="mx-2 h-5 bg-white/20"
+            />
+            <Link
+              href="/sign-in"
+              className={cn(navLinkBase, "font-medium text-[#9d8bff]")}
+            >
+              Sign In
+            </Link>
+          </nav>
+
+          <Button
+            render={<Link href="/sign-up" />}
+            size="lg"
+            className="ms-2 hidden bg-[#7a5af8] font-medium text-white hover:bg-[#6d4ff0] md:inline-flex"
+          >
+            Get Started
+          </Button>
+
+          {/* Mobile */}
+          <Sheet>
+            <SheetTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-lg"
+                  aria-label="Open menu"
+                  className="-me-2 text-white hover:bg-white/10 hover:text-white md:hidden"
+                />
+              }
+            >
+              <MenuIcon />
+              <span className="sr-only">Toggle menu</span>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-72 gap-0 border-white/10 bg-[#191919] text-white [&_[data-slot=sheet-close]]:hover:bg-white/10 [&_[data-slot=sheet-close]]:hover:text-white"
+            >
+              <SheetHeader className="border-b border-white/10">
+                <SheetTitle className="sr-only">Main menu</SheetTitle>
+                <Logo />
+              </SheetHeader>
+              <nav aria-label="Main" className="flex flex-col gap-1 p-3">
+                {navLinks.map((link) => (
+                  <SheetClose
+                    key={link.href}
+                    render={
+                      <Link
+                        href={link.href}
+                        className="rounded-lg px-3 py-2.5 text-sm text-neutral-300 hover:bg-white/10 hover:text-white"
+                      />
+                    }
+                  >
+                    {link.label}
+                  </SheetClose>
+                ))}
+              </nav>
+              <SheetFooter className="gap-2 border-t border-white/10 p-3">
+                <SheetClose
+                  render={
+                    <Link
+                      href="/sign-in"
+                      className="rounded-lg px-3 py-2.5 text-center text-sm font-medium text-[#9d8bff] hover:bg-white/10 hover:text-[#9d8bff]"
+                    />
+                  }
+                >
+                  Sign In
+                </SheetClose>
+                <SheetClose
+                  render={
+                    <Button
+                      size="lg"
+                      className="w-full bg-[#7a5af8] font-medium text-white hover:bg-[#6d4ff0]"
+                    />
+                  }
+                >
+                  Get Started
+                </SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+        </div>
+      </div>
+    </header>
+  )
+}
