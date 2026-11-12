@@ -23,7 +23,7 @@ const stats = [
 
 export function Hero() {
   return (
-    <section className="relative overflow-hidden  bg-[#0a0a0a] text-white">
+    <section className="relative overflow-hidden bg-[#0a0a0a] text-white">
       {/* Globe backdrop */}
       <Image
         src={GlobeImage}
@@ -31,7 +31,7 @@ export function Hero() {
         aria-hidden
         priority
         sizes="(min-width: 640px) 100vw, 170vw"
-        className="pointer-events-none absolute  left-1/2 w-[170%] max-w-none -translate-x-1/2 select-none sm:w-full sm:max-w-[1400px]"
+        className="pointer-events-none absolute left-1/2 w-[170%] max-w-none -translate-x-1/2 select-none sm:w-full sm:max-w-[1400px]"
       />
 
       <div className="relative z-10 mx-auto max-w-7xl px-4 pt-14 pb-14 sm:px-6 sm:pt-20 lg:px-8 lg:pt-24">

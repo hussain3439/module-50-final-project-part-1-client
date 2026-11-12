@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
 import { MenuIcon } from "lucide-react"
-
+import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import {
@@ -15,11 +15,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet"
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip"
 import { cn } from "cn"
 import Image from "next/image"
 
 import LogoImage from "@/app/assets/logo.png"
 import { signOut, useSession } from "@/lib/auth-client"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const navLinks = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -46,12 +52,12 @@ export function SiteNavbar() {
 
   const handleSignOut = async () => {
     await signOut({
-  fetchOptions: {
-    onSuccess: () => {
-      router.push("/login"); // redirect to login page
-    },
-  },
-});
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/sign-in") // redirect to login page
+        },
+      },
+    })
   }
 
   return (
@@ -93,9 +99,32 @@ export function SiteNavbar() {
               className="mx-2 h-5 bg-white/20"
             />
           </nav>
-          {user ? (
+          {isPending ? (
+            // Loading State
             <div className="flex items-center gap-3">
-              <div className="text-white">{user.name}</div>
+              <Skeleton className="h-10 w-10 rounded-full" />
+              <Skeleton className="hidden h-9 w-20 rounded-md md:block" />
+            </div>
+          ) : user ? (
+            <div className="flex items-center gap-3">
+              <Tooltip>
+                <TooltipTrigger>
+                  <Avatar className="h-10 w-10 cursor-pointer border-2 border-emerald-500">
+                    <AvatarImage
+                      src={user?.image || ""}
+                      alt={user?.name || "User"}
+                    />
+
+                    <AvatarFallback className="bg-emerald-100 font-bold text-emerald-700">
+                      {user?.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </TooltipTrigger>
+
+                <TooltipContent side="bottom">
+                  <p>{user?.name || "Unknown User"}</p>
+                </TooltipContent>
+              </Tooltip>
 
               <Button
                 onClick={handleSignOut}
@@ -112,12 +141,12 @@ export function SiteNavbar() {
               >
                 Sign In
               </Link>
-<Link
-  href="/sign-up"
-  className="hidden md:inline-flex items-center justify-center rounded-md bg-[#7a5af8] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#6d4ff0]"
->
-  Sign Up
-</Link>
+              <Link
+                href="/sign-up"
+                className="hidden items-center justify-center rounded-md bg-[#7a5af8] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#6d4ff0] md:inline-flex"
+              >
+                Sign Up
+              </Link>
             </div>
           )}
 

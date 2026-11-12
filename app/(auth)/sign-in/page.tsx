@@ -1,12 +1,12 @@
-'use client';
+"use client"
 import Link from "next/link"
 import { useState, type FormEvent } from "react"
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { signIn } from "@/lib/auth-client"
-import { redirect } from "next/navigation";
-import { toast } from "sonner";
+import { redirect, useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 type SignInFormData = {
   email: string
@@ -18,6 +18,7 @@ const inputClasses =
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false)
+  const router = useRouter()
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -34,13 +35,13 @@ const SignInPage = () => {
       })
 
       if (error) {
-        toast.error('Sign in failed!')
+        toast.error("Sign in failed!")
         console.log(error.message)
         return
       }
-      if(data){
-        toast.success('Sign in successfully')
-        redirect('/')
+      if (data) {
+        toast.success("Sign in successfully")
+        router.push("/")
       }
       console.log("Signup successful:", data)
     } catch (error) {

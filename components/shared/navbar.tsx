@@ -30,12 +30,7 @@ const NAV_LINKS = [
 function Logo() {
   return (
     <Link href="/" aria-label="HireLoop home" className="shrink-0">
-      <Image
-        src={LogoImage}
-        alt="HireLoop"
-        className="h-7 w-auto"
-        priority
-      />
+      <Image src={LogoImage} alt="HireLoop" className="h-7 w-auto" priority />
     </Link>
   )
 }
