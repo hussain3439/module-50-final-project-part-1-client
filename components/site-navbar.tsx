@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { MenuIcon } from "lucide-react"
@@ -17,6 +16,9 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet"
 import { cn } from "cn"
+import Image from "next/image"
+
+import LogoImage from "@/app/assets/logo.png"
 
 const navLinks = [
   { label: "Browse Jobs", href: "/jobs" },
@@ -33,45 +35,6 @@ function isActivePath(pathname: string, href: string) {
     : pathname === href || pathname.startsWith(`${href}/`)
 }
 
-function LoopMark(props: React.ComponentProps<"svg">) {
-  return (
-    <svg
-      aria-hidden="true"
-      fill="none"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth={3}
-      viewBox="0 0 24 24"
-      {...props}
-    >
-      <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74" stroke="#3b82f6" />
-      <path d="M21 3v5h-5M17.74 5.74 21 8" stroke="#f97316" />
-    </svg>
-  )
-}
-
-function Logo({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof Link>, "href">) {
-  return (
-    <Link
-      href="/"
-      aria-label="Hireloop home"
-      data-slot="navbar-logo"
-      className={cn(
-        "flex items-center text-xl font-bold tracking-tight",
-        className
-      )}
-      {...props}
-    >
-      <span className="text-[#3b82f6]">hire</span>
-      <LoopMark className="size-5" />
-      <span className="text-[#f97316]">loop</span>
-    </Link>
-  )
-}
-
 export function SiteNavbar() {
   const pathname = usePathname()
 
@@ -81,7 +44,14 @@ export function SiteNavbar() {
       className="sticky top-0 z-50 w-full border-b border-white/10 bg-[#191919]"
     >
       <div className="mx-auto flex h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
-        <Logo />
+        <Link href="/" aria-label="HireLoop home" className="shrink-0">
+          <Image
+            src={LogoImage}
+            alt="HireLoop"
+            className="h-7 w-auto"
+            priority
+          />
+        </Link>
 
         {/* Desktop */}
         <div className="flex items-center justify-end">
@@ -119,10 +89,10 @@ export function SiteNavbar() {
             size="lg"
             className="ms-2 hidden bg-[#7a5af8] font-medium text-white hover:bg-[#6d4ff0] md:inline-flex"
           >
-            Get Started
+            Sign Up
           </Button>
 
-          {/* Mobile */}
+          {/* Mobile version*/}
           <Sheet>
             <SheetTrigger
               render={
@@ -143,8 +113,16 @@ export function SiteNavbar() {
             >
               <SheetHeader className="border-b border-white/10">
                 <SheetTitle className="sr-only">Main menu</SheetTitle>
-                <Logo />
+                <Link href="/" aria-label="HireLoop home" className="shrink-0">
+                  <Image
+                    src={LogoImage}
+                    alt="HireLoop"
+                    className="h-7 w-auto"
+                    priority
+                  />
+                </Link>
               </SheetHeader>
+              {/* mobile menu */}
               <nav aria-label="Main" className="flex flex-col gap-1 p-3">
                 {navLinks.map((link) => (
                   <SheetClose
@@ -179,7 +157,7 @@ export function SiteNavbar() {
                     />
                   }
                 >
-                  Get Started
+                  Sign Up
                 </SheetClose>
               </SheetFooter>
             </SheetContent>
