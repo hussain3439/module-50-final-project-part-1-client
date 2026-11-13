@@ -1,11 +1,12 @@
-"use client";
+"use client"
 import { useState } from "react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { createJob } from "@/lib/actions/job"
 
 // Flat state — every field is a plain string, so ONE generic handler covers all inputs.
-type JobForm = {
+export type JobForm = {
   title: string
   category: string
   type: string
@@ -59,25 +60,35 @@ const labelClass = "text-sm font-medium"
 const NewJobPage = () => {
   const [formData, setFormData] = useState<JobForm>(initialJobForm)
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
+  ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     // TODO: POST `formData` to the backend. The server attaches status: "active"
     // and the company from the logged-in recruiter's session.
-    console.log("New job:", formData)
-    toast.success("Job posted successfully!")
+
+    // console.log("New job:", formData)
+
+    const result = await createJob(formData)
+    // console.log(result, 'result is fine')
+    if (result) {
+      toast.success("Job posted successfully!")
+    }
+
     setFormData(initialJobForm)
   }
-  console.log(initialJobForm, 'the form data is...')
 
   return (
     <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
       <div>
         <h1 className="text-2xl font-semibold">Post a Job</h1>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           Fill in the details below — your job goes live right after submitting.
         </p>
       </div>
@@ -86,7 +97,10 @@ const NewJobPage = () => {
         {/* Company — auto-filled, read-only */}
         <div className="space-y-1.5">
           <label className={labelClass}>Company</label>
-          <Input placeholder="Auto-filled from your registered company" disabled />
+          <Input
+            placeholder="Auto-filled from your registered company"
+            disabled
+          />
         </div>
 
         {/* Job Info */}
