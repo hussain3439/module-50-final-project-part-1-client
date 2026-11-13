@@ -22,5 +22,5 @@ export type JobPost = JobFormData & {
   _id: string
   status: JobStatus
   applicantsCount: number
-  datePosted: string
+  datePosted: string //
 }

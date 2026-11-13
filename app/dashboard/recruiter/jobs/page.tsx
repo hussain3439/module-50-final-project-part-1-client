@@ -15,6 +15,22 @@ import { JobFormData, JobPost } from "@/lib/types"
 
 export type JobStatus = "active" | "closed" | "draft"
 
+const formatDate = (date: string) => {
+  if (!date) return "Not specified";
+
+  const parsedDate = new Date(date);
+
+  if (Number.isNaN(parsedDate.getTime())) {
+    return date;
+  }
+
+  return parsedDate.toLocaleDateString("en-US", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 const statusBadge: Record<JobStatus, string> = {
   active: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   closed: "bg-red-500/10 text-red-600 dark:text-red-400",
@@ -107,16 +123,24 @@ const ManageJobPage = async () => {
                 </td>
 
                 <td className="hidden px-4 py-3 whitespace-nowrap sm:table-cell">
-                  {job.datePosted || "—"}
+                  {formatDate(job.deadline)}
                 </td>
 
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
-                    {/* TODO: navigate to an edit page once it exists */}
-                    <Button variant="ghost" size="icon-sm" title="Edit">
-                      <Pencil />
-                    </Button>
 
+                    <Link
+                      href={`/dashboard/recruiter/jobs/${job._id}/edit-job`}
+                      className={buttonVariants({
+                        variant: "ghost",
+                        size: "icon-sm",
+                      })}
+                      title="Edit"
+                    >
+                      <Pencil />
+                    </Link>
+
+                    {/* view detail job link */}
                     <Link
                       href={`/dashboard/recruiter/jobs/${job._id}`}
                       className={buttonVariants({

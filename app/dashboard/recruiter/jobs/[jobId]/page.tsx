@@ -68,7 +68,7 @@ const JobDetailPage = async ({params}: {params: Promise<{ jobId: string }>;}) =>
           </Button>
 
           <Button className="gap-2">
-            <Link href={`/dashboard/recruiter/jobs/${job._id}/edit`} className="flex items-center gap-1">
+            <Link href={`/dashboard/recruiter/jobs/${job._id}/edit-job`} className="flex items-center gap-1">
               <Edit className="size-4" />
               Edit Job
             </Link>
