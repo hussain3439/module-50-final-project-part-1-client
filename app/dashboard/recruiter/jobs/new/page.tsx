@@ -4,23 +4,9 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { createJob } from "@/lib/actions/job"
+import type { JobFormData } from "@/lib/types"
 
-// Flat state — every field is a plain string, so ONE generic handler covers all inputs.
-export type JobForm = {
-  title: string
-  category: string
-  type: string
-  salaryMin: string
-  salaryMax: string
-  currency: string
-  location: string
-  deadline: string
-  responsibilities: string
-  requirements: string
-  benefits: string
-}
-
-const initialJobForm: JobForm = {
+const initialJobForm: JobFormData = {
   title: "",
   category: "",
   type: "",
@@ -32,6 +18,7 @@ const initialJobForm: JobForm = {
   responsibilities: "",
   requirements: "",
   benefits: "",
+  status: "active",
 }
 
 const jobCategories = [
@@ -58,7 +45,7 @@ const textareaClass =
 const labelClass = "text-sm font-medium"
 
 const NewJobPage = () => {
-  const [formData, setFormData] = useState<JobForm>(initialJobForm)
+  const [formData, setFormData] = useState<JobFormData>(initialJobForm)
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -85,7 +72,7 @@ const NewJobPage = () => {
   }
 
   return (
-    <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
+    <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
       <div>
         <h1 className="text-2xl font-semibold">Post a Job</h1>
         <p className="text-sm text-muted-foreground">
@@ -222,7 +209,7 @@ const NewJobPage = () => {
             </div>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div className="space-y-1.5">
               <label htmlFor="location" className={labelClass}>
                 Location (City, Country)
@@ -248,6 +235,24 @@ const NewJobPage = () => {
                 onChange={handleChange}
                 required
               />
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="status" className={labelClass}>
+                Job Status
+              </label>
+
+              <select
+                id="status"
+                name="status"
+                value={formData.status}
+                onChange={handleChange}
+                className={selectClass}
+                required
+              >
+                <option value="active">Active</option>
+                <option value="draft">Draft</option>
+                <option value="closed">Closed</option>
+              </select>
             </div>
           </div>
         </section>
