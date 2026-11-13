@@ -27,12 +27,6 @@ import LogoImage from "@/app/assets/logo.png"
 import { signOut, useSession } from "@/lib/auth-client"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-const navLinks = [
-  { label: "Browse Jobs", href: "/jobs" },
-  { label: "Company", href: "/company" },
-  { label: "Pricing", href: "/pricing" },
-]
-
 const navLinkBase =
   "rounded-lg px-3 py-2 text-sm text-neutral-300 outline-none transition-colors hover:bg-white/10 hover:text-white focus-visible:ring-2 focus-visible:ring-white/50"
 
@@ -49,6 +43,13 @@ export function SiteNavbar() {
   const { data: session, isPending } = useSession()
   const user = session?.user
   console.log(user?.name)
+
+  const navLinks = [
+    { label: "Browse Jobs", href: "/jobs" },
+    { label: "Company", href: "/company" },
+    { label: "Pricing", href: "/pricing" },
+    { label: "Dashboard", href: `/dashboard/${user?.role}` },
+  ]
 
   const handleSignOut = async () => {
     await signOut({

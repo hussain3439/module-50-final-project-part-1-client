@@ -31,7 +31,7 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <SiteNavbar />
+          
           <Toaster />
           <main className="flex-1">{children}</main>
         </ThemeProvider>
