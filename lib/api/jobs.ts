@@ -9,3 +9,8 @@ export const detailJob = async(jobId:string) => {
     const res = await fetch(`${BASE_URL}/jobs/${jobId}`)
     return res.json()
 }
+// brows-jobs:detail page
+export const browsDetailJob = async(jobId:string) => {
+    const res = await fetch(`${BASE_URL}/jobs/${jobId}`)
+    return res.json()
+}

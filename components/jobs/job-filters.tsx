@@ -28,6 +28,7 @@ export function JobFilters() {
 
   const handleReset = () => {
     // TODO: clear all the filter inputs.
+    router.push('/brows-jobs')
   }
 
   return (

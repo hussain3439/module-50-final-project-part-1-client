@@ -49,9 +49,9 @@ export function JobCard({ job }: { job: JobPost }) {
       </div>
 
       <div className="mt-auto pt-6">
-        {/* TODO: point this to the public job details page when it exists. */}
+        {/* Every card leads to the job details page. */}
         <Link
-          href="#"
+          href={`/brows-jobs/${job._id}`}
           className="group inline-flex items-center gap-1.5 text-sm font-medium text-white transition-colors hover:text-[#9d8bff]"
         >
           View details

@@ -5,7 +5,7 @@ import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { signIn } from "@/lib/auth-client"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { toast } from "sonner"
 
 type SignInFormData = {
@@ -19,6 +19,8 @@ const inputClasses =
 const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams.get('redirectTo') ?? '/';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -32,6 +34,8 @@ const SignInPage = () => {
       const { data, error } = await signIn.email({
         email: userData.email,
         password: userData.password,
+        rememberMe:true,
+        callbackURL: redirectTo,
       })
 
       if (error) {
