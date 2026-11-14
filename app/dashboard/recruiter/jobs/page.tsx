@@ -1,17 +1,17 @@
 import Link from "next/link"
 import { cn } from "cn"
 import {
-  CircleStop,
+
   Eye,
   Pencil,
-  RotateCcw,
+
   SquarePlus,
-  Trash,
+
 } from "lucide-react"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { getJobs } from "@/lib/api/jobs"
 import { DeleteJobDialogue } from "../../_components/DeleteJobDialogue"
-import { JobFormData, JobPost } from "@/lib/types"
+import { JobPost } from "@/lib/types"
 
 export type JobStatus = "active" | "closed" | "draft"
 
