@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { useState, type FormEvent } from "react"
+import { Suspense, useState, type FormEvent } from "react"
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -16,11 +16,11 @@ type SignInFormData = {
 const inputClasses =
   "h-10 w-full rounded-lg border border-white/10 bg-white/[0.03] text-sm text-white outline-none transition-colors placeholder:text-neutral-500 focus-visible:border-[#7a5af8]/60 focus-visible:ring-2 focus-visible:ring-[#7a5af8]/25"
 
-const SignInPage = () => {
+const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const redirectTo = searchParams.get('redirectTo') ?? '/';
+  const redirectTo = searchParams.get("redirectTo") ?? "/"
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
@@ -34,7 +34,7 @@ const SignInPage = () => {
       const { data, error } = await signIn.email({
         email: userData.email,
         password: userData.password,
-        rememberMe:true,
+        rememberMe: true,
         callbackURL: redirectTo,
       })
 
@@ -145,5 +145,12 @@ const SignInPage = () => {
     </>
   )
 }
+
+// useSearchParams() must sit inside a Suspense boundary for static prerendering.
+const SignInPage = () => (
+  <Suspense>
+    <SignInForm />
+  </Suspense>
+)
 
 export default SignInPage

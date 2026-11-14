@@ -30,14 +30,20 @@ export type JobPost = JobFormData & {
 export type ApplicationStatus =
   "applied" | "under review" | "shortlisted" | "rejected" | "offered"
 
-// What a seeker submits when applying to a job (from the apply modal).
-// jobTitle + company are copied from the job post, so the "My Applications"
-// table can show them without asking the jobs endpoint again.
+// What a seeker submits when applying to a job (sent by JobApplyButton).
+// userId/email/userName come from the signed-in session, jobTitle/jobCategory
+// are copied from the job post. The "My Applications" table shows jobTitle,
+// company and the status/date the backend adds, so `company` is optional —
+// the backend can attach it when saving.
 export type ApplicationFormData = {
   jobId: string
   jobTitle: string
-  company: string
-  coverLetter: string
+  jobCategory: string
+  userId: string
+  email: string
+  userName: string
+  company?: string
+  coverLetter?: string
 }
 
 // A stored application = the form data + the fields the backend adds when saving.
