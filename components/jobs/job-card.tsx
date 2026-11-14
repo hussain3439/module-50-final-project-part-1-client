@@ -7,6 +7,8 @@ import {
 } from "lucide-react"
 
 import type { JobPost } from "@/lib/types"
+import { Save } from "lucide-react"
+import { Button } from "@/components/ui/button"
 
 // Small pill/tag style, reused for every tag inside the card.
 const tagClass =
@@ -48,7 +50,7 @@ export function JobCard({ job }: { job: JobPost }) {
         )}
       </div>
 
-      <div className="mt-auto pt-6">
+      <div className="mt-auto pt-6 flex justify-between items-center">
         {/* Every card leads to the job details page. */}
         <Link
           href={`/brows-jobs/${job._id}`}
@@ -57,6 +59,10 @@ export function JobCard({ job }: { job: JobPost }) {
           View details
           <ArrowRightIcon className="size-3.5 transition-transform group-hover:translate-x-0.5" />
         </Link>
+        <Button>
+          <Save className="mr-1 size-4" />
+          Save
+        </Button>
       </div>
     </article>
   )

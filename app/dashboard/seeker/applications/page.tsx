@@ -18,87 +18,9 @@ import { cn } from "cn"
 
 import { buttonVariants } from "@/components/ui/button"
 import type { ApplicationStatus, JobApplication } from "@/lib/types"
-
-const daysAgo = (days: number) =>
-  new Date(Date.now() - days * 1000 * 60 * 60 * 24).toISOString()
-
-const applications: JobApplication[] = [
-  {
-    _id: "demo-app-1",
-    jobId: "6af6f9fed698b681e41472b8",
-    jobTitle: "Digital Marketting",
-    jobCategory: "Marketing",
-    company: "AdVantage Media",
-    userId: "demo-user-1",
-    email: "seeker@hireloop.dev",
-    userName: "Demo Seeker",
-    coverLetter: "I would love to grow your marketing team.",
-    status: "applied",
-    dateApplied: daysAgo(0.1), // a few hours ago
-  },
-  {
-    _id: "demo-app-2",
-    jobId: "6af6fee894837b847d6f6d0b",
-    jobTitle: "UI/UX Designer",
-    jobCategory: "Design & Creative",
-    company: "CloudScale AI",
-    userId: "demo-user-1",
-    email: "seeker@hireloop.dev",
-    userName: "Demo Seeker",
-    status: "under review",
-    dateApplied: daysAgo(2),
-  },
-  {
-    _id: "demo-app-3",
-    jobId: "6af6fee894837b847d6f6d0c",
-    jobTitle: "Backend Developer (Node.js)",
-    jobCategory: "Software Development",
-    company: "ByteWorks",
-    userId: "demo-user-1",
-    email: "seeker@hireloop.dev",
-    userName: "Demo Seeker",
-    status: "offered",
-    dateApplied: daysAgo(9),
-  },
-  {
-    _id: "demo-app-4",
-    jobId: "6af6fee894837b847d6f6d0e",
-    jobTitle: "Data Analyst (Intern)",
-    jobCategory: "Data & Analytics",
-    company: "DataPulse",
-    userId: "demo-user-1",
-    email: "seeker@hireloop.dev",
-    userName: "Demo Seeker",
-    status: "rejected",
-    dateApplied: daysAgo(6),
-  },
-  {
-    _id: "demo-app-5",
-    jobId: "6af71d9717e68b46286069f9",
-    jobTitle: "A Backend Developer",
-    jobCategory: "Software Development",
-    company: "CloudScale AI",
-    userId: "demo-user-1",
-    email: "seeker@hireloop.dev",
-    userName: "Demo Seeker",
-    status: "shortlisted",
-    dateApplied: daysAgo(14),
-  },
-  {
-    _id: "demo-app-6",
-    jobId: "6af73bb5673a02610addaf95",
-    jobTitle: "Web Developer from Bangladesh",
-    jobCategory: "Data & Analytics",
-    company: "NexaSoft",
-    userId: "demo-user-1",
-    email: "seeker@hireloop.dev",
-    userName: "Demo Seeker",
-    status: "applied",
-    dateApplied: daysAgo(40),
-  },
-]
-
-// ── Small helpers ─────────────────────────────────────────────────────────────
+import { getApplication } from "@/lib/actions/application"
+import { auth } from "@/lib/auth"
+import { headers } from "next/headers"
 
 // The spec wants relative dates in this table (e.g. "2 hours ago").
 const timeAgo = (date: string) => {
@@ -150,25 +72,50 @@ const categoryTileClass: Record<string, string> = {
   Other: "bg-neutral-500/10 text-neutral-600 dark:text-neutral-400",
 }
 
-const MyApplicationsPage = () => {
-  // Stats are computed from the same list, so they keep working with real data.
+const MyApplicationsPage = async () => {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+  const applications: JobApplication[] = await getApplication(`applicantId=${session?.user.id}`)
+
+  // Application statistics
   const totalApplied = applications.length
+
   const shortlistedCount = applications.filter(
-    (application) => application.status === "shortlisted"
+    (app) => app.status === "shortlisted"
   ).length
+
   const inReviewCount = applications.filter(
-    (application) => application.status === "under review"
+    (app) => app.status === "under review"
   ).length
+
   const offeredCount = applications.filter(
-    (application) => application.status === "offered"
+    (app) => app.status === "offered"
   ).length
-  // Success rate = offers ÷ total applications, as a rounded percentage.
-  const successRate =
-    totalApplied === 0 ? 0 : Math.round((offeredCount / totalApplied) * 100)
+
+  const successRate = totalApplied
+    ? Math.round((offeredCount / totalApplied) * 100)
+    : 0
+
+  // Stats data
+  const stats = [
+    { title: "Total Applied", value: totalApplied },
+    { title: "Shortlisted", value: shortlistedCount },
+    {
+      title: "In Review",
+      value: inReviewCount,
+      color: "text-amber-500 dark:text-amber-400",
+    },
+    {
+      title: "Success Rate",
+      value: `${successRate}%`,
+      color: "text-emerald-500 dark:text-emerald-400",
+    },
+  ]
 
   return (
     <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
-      {/* Header: title + view toggle + export */}
+      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">My Applications</h1>
@@ -178,8 +125,6 @@ const MyApplicationsPage = () => {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* TODO: make these two buttons filter the table once archived
-              applications exist. For now they are just visuals. */}
           <div className="inline-flex items-center gap-1 rounded-lg border bg-muted/30 p-1">
             <span className="inline-flex h-7 items-center rounded-md bg-white/10 px-3 text-sm font-medium text-white">
               Active
@@ -189,7 +134,6 @@ const MyApplicationsPage = () => {
             </span>
           </div>
 
-          {/* TODO: generate + download a PDF of the applications. */}
           <button type="button" className={cn(buttonVariants())}>
             <DownloadIcon />
             Export PDF
@@ -197,35 +141,20 @@ const MyApplicationsPage = () => {
         </div>
       </div>
 
-      {/* Stats row */}
+      {/* Statistics */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border bg-card p-5">
-          <p className="text-sm text-muted-foreground">Total Applied</p>
-          <p className="mt-1 text-2xl font-semibold">{totalApplied}</p>
-        </div>
-        <div className="rounded-xl border bg-card p-5">
-          <p className="text-sm text-muted-foreground">Shortlisted</p>
-          <p className="mt-1 text-2xl font-semibold">{shortlistedCount}</p>
-        </div>
-        {/* Our status list has no "interview" state, so this card counts the
-            applications currently under review. */}
-        <div className="rounded-xl border bg-card p-5">
-          <p className="text-sm text-muted-foreground">In Review</p>
-          <p className="mt-1 text-2xl font-semibold text-amber-500 dark:text-amber-400">
-            {inReviewCount}
-          </p>
-        </div>
-        <div className="rounded-xl border bg-card p-5">
-          <p className="text-sm text-muted-foreground">Success Rate</p>
-          <p className="mt-1 text-2xl font-semibold text-emerald-500 dark:text-emerald-400">
-            {successRate}%
-          </p>
-        </div>
+        {stats.map((stat) => (
+          <div key={stat.title} className="rounded-xl border bg-card p-5">
+            <p className="text-sm text-muted-foreground">{stat.title}</p>
+            <p className={cn("mt-1 text-2xl font-semibold", stat.color)}>
+              {stat.value}
+            </p>
+          </div>
+        ))}
       </div>
 
-      {/* Applications table */}
+      {/* Applications Table */}
       <div className="overflow-x-auto rounded-xl border bg-card">
-        {/* min-w keeps columns readable; the wrapper scrolls horizontally on small screens */}
         <table className="w-full min-w-[720px] text-sm">
           <thead>
             <tr className="border-b bg-muted/50 text-left">
@@ -236,58 +165,62 @@ const MyApplicationsPage = () => {
               <th className="px-4 py-3 text-right font-medium">Action</th>
             </tr>
           </thead>
+
           <tbody>
-            {applications.map((application) => {
-              const Icon =
-                categoryIcons[application.jobCategory] ?? BriefcaseIcon
+            {applications.map((app) => {
+              const Icon = categoryIcons[app.jobCategory] || BriefcaseIcon
+
               return (
                 <tr
-                  key={application._id}
+                  key={app._id}
                   className="border-b transition-colors last:border-b-0 hover:bg-muted/40"
                 >
+                  {/* Job Title */}
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       <span
                         className={cn(
                           "flex size-9 shrink-0 items-center justify-center rounded-lg",
-                          categoryTileClass[application.jobCategory] ??
+                          categoryTileClass[app.jobCategory] ||
                             categoryTileClass.Other
                         )}
                       >
                         <Icon className="size-4" />
                       </span>
+
                       <div>
-                        <div className="font-medium">
-                          {application.jobTitle}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {application.jobCategory}
-                        </div>
+                        <p className="font-medium">{app.jobTitle}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {app.jobCategory}
+                        </p>
                       </div>
                     </div>
                   </td>
 
-                  <td className="px-4 py-3">{application.company}</td>
+                  {/* Company */}
+                  <td className="px-4 py-3">{app.company}</td>
 
+                  {/* Applied Date */}
                   <td className="px-4 py-3 whitespace-nowrap">
-                    {timeAgo(application.dateApplied)}
+                    {timeAgo(app.dateApplied)}
                   </td>
 
+                  {/* Status */}
                   <td className="px-4 py-3">
                     <span
                       className={cn(
                         "inline-flex rounded-full px-2 py-0.5 text-xs font-medium capitalize",
-                        statusBadge[application.status]
+                        statusBadge[app.status]
                       )}
                     >
-                      {application.status}
+                      {app.status}
                     </span>
                   </td>
 
+                  {/* Action */}
                   <td className="px-4 py-3 text-right">
-                    {/* Links to the public job details page */}
                     <Link
-                      href={`/brows-jobs/${application.jobId}`}
+                      href={`/brows-jobs/${app.jobId}`}
                       className="text-sm font-medium transition-colors hover:underline"
                     >
                       Details
@@ -299,7 +232,7 @@ const MyApplicationsPage = () => {
           </tbody>
         </table>
 
-        {/* Footer: summary + pager */}
+        {/* Table Footer */}
         {applications.length > 0 && (
           <div className="flex items-center justify-between gap-4 border-t px-4 py-3">
             <p className="text-xs text-muted-foreground">
@@ -307,11 +240,8 @@ const MyApplicationsPage = () => {
               applications
             </p>
 
-            {/* TODO: real pagination when the applications endpoint
-                returns pages — for now there is only page 1. */}
             <div className="flex items-center gap-1">
               <button
-                type="button"
                 disabled
                 className={buttonVariants({
                   variant: "outline",
@@ -320,14 +250,10 @@ const MyApplicationsPage = () => {
               >
                 <ChevronLeftIcon />
               </button>
+
+              <button className={buttonVariants({ size: "icon-sm" })}>1</button>
+
               <button
-                type="button"
-                className={buttonVariants({ size: "icon-sm" })}
-              >
-                1
-              </button>
-              <button
-                type="button"
                 disabled
                 className={buttonVariants({
                   variant: "outline",
@@ -340,6 +266,7 @@ const MyApplicationsPage = () => {
           </div>
         )}
 
+        {/* Empty State */}
         {applications.length === 0 && (
           <div className="px-4 py-10 text-center text-sm text-muted-foreground">
             No applications yet — apply to jobs from the Browse Jobs page.
