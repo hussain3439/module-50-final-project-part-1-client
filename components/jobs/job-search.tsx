@@ -4,14 +4,22 @@ import { SearchIcon } from "lucide-react"
 import type { FormEvent } from "react"
 
 import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
 
-// Keyword search bar for the Browse Jobs page.
-// Submitting is intentionally a no-op: the URL / search query is not touched yet.
 export function JobSearch() {
+  const router = useRouter();
+
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    // Keep the page from reloading natively — searching will be wired up later.
     event.preventDefault()
-    // TODO: read the `keyword` field and refresh the results (owner).
+    const formData = new FormData(event.currentTarget);
+    const data = Object.fromEntries(formData.entries());
+    // console.log(data, 'search is')
+
+    const search = data.searchField;
+    const params = new URLSearchParams()
+    params.set('search', search as string)
+    router.push(`/brows-jobs?${params.toString()}`)
   }
 
   return (
@@ -24,7 +32,7 @@ export function JobSearch() {
         <SearchIcon className="size-4 shrink-0 text-neutral-500" />
         <input
           type="text"
-          name="keyword"
+          name="searchField"
           aria-label="Job title, skill, or company"
           placeholder="Job title, skill or company"
           className="h-9 w-full min-w-0 bg-transparent text-sm text-white outline-none placeholder:text-neutral-500"

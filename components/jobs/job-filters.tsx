@@ -3,23 +3,28 @@
 import { RotateCcwIcon, SlidersHorizontalIcon } from "lucide-react"
 
 import { JOB_CATEGORIES, JOB_TYPES } from "@/lib/constants"
+import { useRouter } from "next/navigation"
 
-// Same visual language as the other inputs on the site (auth pages, dashboard forms).
 const fieldClass =
   "h-10 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 text-sm text-white outline-none placeholder:text-neutral-500 focus-visible:border-[#7a5af8]/60 focus-visible:ring-2 focus-visible:ring-[#7a5af8]/25"
 const labelClass = "text-xs font-medium text-neutral-400"
-// Native radio, colored purple to match the theme. Radios that share the same
-// "name" can only have ONE checked at a time.
+
 const radioClass = "size-4 cursor-pointer accent-[#7a5af8]"
-// Row that wraps one radio + its text, so clicking the text selects the radio too.
+
 const optionClass =
   "flex cursor-pointer items-center gap-2.5 rounded-lg px-1 py-0.5 text-sm text-neutral-300 transition-colors hover:text-white"
 
 export function JobFilters() {
-  // Empty on purpose: changing a filter must not change the URL / search query.
-  // TODO: add (event) here, then use event.target.name + event.target.value
-  // to load the jobs matching this filter.
-  const handleFilterChange = () => {}
+  const router = useRouter();
+
+  const handleFilterChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+    // console.log(name, event.target.value)
+
+    const params = new URLSearchParams(window.location.search);
+    const name = event.target.name;
+    params.set(name, event.target.value);
+    router.push(`/brows-jobs?${params.toString()}`)
+  }
 
   const handleReset = () => {
     // TODO: clear all the filter inputs.
