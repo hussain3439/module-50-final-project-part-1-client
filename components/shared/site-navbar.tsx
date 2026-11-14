@@ -45,7 +45,7 @@ export function SiteNavbar() {
   console.log(user?.name)
 
   const navLinks = [
-    { label: "Browse Jobs", href: "/jobs" },
+    { label: "Browse Jobs", href: "/brows-jobs" },
     { label: "Company", href: "/company" },
     { label: "Pricing", href: "/pricing" },
     { label: "Dashboard", href: `/dashboard/${user?.role}` },

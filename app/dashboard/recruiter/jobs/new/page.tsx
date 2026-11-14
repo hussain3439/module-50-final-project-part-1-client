@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { createJob } from "@/lib/actions/job"
 import type { JobFormData } from "@/lib/types"
+import { useRouter } from "next/navigation"
 
 const initialJobForm: JobFormData = {
   title: "",
@@ -45,6 +46,8 @@ const textareaClass =
 const labelClass = "text-sm font-medium"
 
 const NewJobPage = () => {
+  const router = useRouter();
+
   const [formData, setFormData] = useState<JobFormData>(initialJobForm)
 
   const handleChange = (
@@ -66,6 +69,7 @@ const NewJobPage = () => {
     // console.log(result, 'result is fine')
     if (result) {
       toast.success("Job posted successfully!")
+      router.push('/dashboard/recruiter/jobs')
     }
 
     setFormData(initialJobForm)

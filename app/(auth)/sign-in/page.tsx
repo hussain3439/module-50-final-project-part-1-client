@@ -5,7 +5,7 @@ import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { signIn } from "@/lib/auth-client"
-import { redirect, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 
 type SignInFormData = {

@@ -17,6 +17,7 @@ import {
   Building,
   CreditCard,
   FileText,
+  Home,
   LayoutDashboard,
   Search,
   Settings,
@@ -25,6 +26,7 @@ import {
   Wallet,
 } from "lucide-react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export type Role = "seeker" | "recruiter" | "admin"
 
@@ -153,6 +155,8 @@ const menuItemsByRole: Record<Role, MenuItem[]> = {
 }
 
 export function DashboardSidebar() {
+  const pathname = usePathname()
+
   const { data: session, isPending } = useSession()
   const role = (session?.user?.role || "seeker") as Role
   const menuItems = menuItemsByRole[role]
@@ -168,14 +172,23 @@ export function DashboardSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.id}>
-                  <SidebarMenuButton render={<Link href={item.url} />}>
+                  <SidebarMenuButton
+                    isActive={pathname === item.url}
+                    render={<Link href={item.url} />}
+                  >
                     <item.icon />
                     <span>{item.name}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
               <SidebarMenuItem>
-                <Link href={"/"}>Home</Link>
+                <SidebarMenuButton
+                  isActive={pathname === "/"}
+                  render={<Link href="/" />}
+                >
+                  <Home />
+                  <span>Home</span>
+                </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>
           </SidebarGroup>

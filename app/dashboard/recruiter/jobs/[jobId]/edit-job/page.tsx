@@ -48,14 +48,14 @@ const EditJobPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    // One FormData collects every named field of the form in a single call.
-    // Object.fromEntries turns the [name, value] pairs into a plain object —
-    // no per-field state or onChange handlers needed at all.
-    const data = Object.fromEntries(new FormData(e.currentTarget).entries()) as unknown as JobPost
+    const formData = new FormData(e.currentTarget)
+    const data = Object.fromEntries(formData.entries()) as unknown as JobPost
     await updateJob(jobId, data)
-    toast.success("Job updated successfully!")
-    router.push("/dashboard/recruiter/jobs")
+
+    if (data) {
+      toast.success("Job updated successfully!")
+      router.push("/dashboard/recruiter/jobs")
+    }
   }
 
   // Don't render the form until the job data is loaded (defaultValue needs it).
