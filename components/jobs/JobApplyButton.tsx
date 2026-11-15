@@ -1,5 +1,5 @@
 "use client"
-import { applyToJob } from "@/lib/actions/application"
+import { applyToJob, getApplicationCount } from "@/lib/actions/application"
 import { useSession } from "@/lib/auth-client"
 import { JobPost } from "@/lib/types"
 import { Button } from "@base-ui/react"
@@ -17,21 +17,28 @@ const JobApplyButton = ({ job }: { job: JobPost }) => {
       router.push(`/sign-in?redirectTo=/brows-jobs/${job._id}`)
       return
     } else if (user?.role === "seeker") {
-      const application = {
-        jobId: job._id,
-        userId: user.id,
-        email: user.email,
-        userName: user.name,
-        jobTitle: job.title,
-        jobCategory: job.category,
-        company: job?.currency || "not specified",
-        coverLetter: "not specified",
-      }
-      const result = await applyToJob(application)
-      if (result.insertedId) {
-        console.log("application submited successfully!")
-        toast.success("Application submited successfully!")
-        router.push("/brows-jobs")
+      // getapplication count api:
+      const countResult = await getApplicationCount(`applicantId=${user.id}`)
+      if (countResult.count >= 10) {
+        router.push("/payment")
+        return
+      } else {
+        const application = {
+          jobId: job._id,
+          userId: user.id,
+          email: user.email,
+          userName: user.name,
+          jobTitle: job.title,
+          jobCategory: job.category,
+          company: job?.currency || "not specified",
+          coverLetter: "not specified",
+        }
+        const result = await applyToJob(application)
+        if (result.insertedId) {
+          console.log("application submited successfully!")
+          toast.success("Application submited successfully!")
+          router.push("/brows-jobs")
+        }
       }
     } else {
       console.log("user is not a seeker")

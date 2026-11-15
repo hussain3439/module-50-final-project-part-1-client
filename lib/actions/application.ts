@@ -18,8 +18,10 @@ export const applyToJob = async (data: ApplicationFormData) => {
 
 export const getApplication = async (query = "") => {
   const res = await fetch(`${BASE_URL}/applications?${query}`)
-  if (!res.ok) {
-    throw new Error("Failed to fetch applications")
-  }
+  return res.json()
+}
+// application count related get api:count
+export const getApplicationCount = async (query = "") => {
+  const res = await fetch(`${BASE_URL}/applications/count?${query}`)
   return res.json()
 }
