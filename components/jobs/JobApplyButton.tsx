@@ -1,5 +1,6 @@
 "use client"
 import { applyToJob, getApplicationCount } from "@/lib/actions/application"
+import { getUserPremiumById } from "@/lib/actions/user"
 import { useSession } from "@/lib/auth-client"
 import { JobPost } from "@/lib/types"
 import { Button } from "@base-ui/react"
@@ -17,9 +18,17 @@ const JobApplyButton = ({ job }: { job: JobPost }) => {
       router.push(`/sign-in?redirectTo=/brows-jobs/${job._id}`)
       return
     } else if (user?.role === "seeker") {
+
+      // isPremium user
+      const premiumResult = await getUserPremiumById(user.id)
+      console.log(premiumResult, 'the premium result is');
+
       // getapplication count api:
+      // number of jobs applied by this user
       const countResult = await getApplicationCount(`applicantId=${user.id}`)
-      if (countResult.count >= 10) {
+      
+      // less more then 10 and not prmium user
+      if (!premiumResult.premium && countResult.count >= 2) {
         router.push("/payment")
         return
       } else {

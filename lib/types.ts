@@ -52,3 +52,7 @@ export type JobApplication = ApplicationFormData & {
   status: ApplicationStatus
   dateApplied: string
 }
+
+export type ApplicationCount = {
+  count: number
+}
