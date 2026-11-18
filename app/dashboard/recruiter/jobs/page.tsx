@@ -1,17 +1,17 @@
 import Link from "next/link"
 import { cn } from "cn"
 import {
-
   Eye,
   Pencil,
-
   SquarePlus,
+  Users,
 
 } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
 import { getJobs } from "@/lib/api/jobs"
 import { DeleteJobDialogue } from "../../_components/DeleteJobDialogue"
 import { JobPost } from "@/lib/types"
+import { getSession } from "@/lib/core/server"
 
 export type JobStatus = "active" | "closed" | "draft"
 
@@ -37,12 +37,13 @@ const statusBadge: Record<JobStatus, string> = {
   draft: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
 }
 
-const ManageJobPage = async () => {
-  const jobs: JobPost[] = await getJobs()
+const RecruiterJobsPage = async () => {
+  const session = await getSession()
+  const jobs: JobPost[] = await getJobs(`recruiterId=${session?.user?.id}`)
 //   console.log(jobs)
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6 p-4 sm:p-6">
+    <div className="mx-auto max-w-4xl space-y-6 p-4 sm:p-6">
       {/* Header: title + plan usage + Post New Job */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -100,7 +101,7 @@ const ManageJobPage = async () => {
                   </div>
                 </td>
 
-                <td className="px-4 py-3">{job.applicantsCount}</td>
+                <td className="px-4 py-3">{job.applicantsCount || 'not-specified'}</td>
 
                 <td className="hidden px-4 py-3 whitespace-nowrap md:table-cell">
                   {job.currency} {Number(job.salaryMin).toLocaleString()} –{" "}
@@ -128,6 +129,17 @@ const ManageJobPage = async () => {
 
                 <td className="px-4 py-3">
                   <div className="flex justify-end gap-1">
+
+                    <Link
+                      href={`/dashboard/recruiter/jobs/${job._id}/applications`}
+                      className={buttonVariants({
+                        variant: "ghost",
+                        size: "icon-sm",
+                      })}
+                      title="View Applications"
+                    >
+                      <Users />
+                    </Link>
 
                     <Link
                       href={`/dashboard/recruiter/jobs/${job._id}/edit-job`}
@@ -170,4 +182,4 @@ const ManageJobPage = async () => {
   )
 }
 
-export default ManageJobPage
+export default RecruiterJobsPage

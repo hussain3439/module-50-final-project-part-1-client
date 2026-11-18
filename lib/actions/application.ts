@@ -1,4 +1,4 @@
-import type { ApplicationCount, ApplicationFormData, JobApplication } from "@/lib/types"
+import type { ApplicationCount, ApplicationFormData, ApplicationStatus, JobApplication } from "@/lib/types"
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL //http://localhost:5000
 
@@ -23,5 +23,19 @@ export const getApplication = async (query = ""): Promise<JobApplication[]> => {
 // application count related get api:count
 export const getApplicationCount = async (query = ""): Promise<ApplicationCount> => {
   const res = await fetch(`${BASE_URL}/applications/count?${query}`)
+  return res.json()
+}
+
+// Recruiter updates an applicant's status from the job applications page
+// (dashboard/recruiter/jobs/[jobId]/applications). The backend needs a
+// PATCH /applications/:id route that runs updateOne({ _id }, { $set: { status } }).
+export const updateApplicationStatus = async (applicationId: string,status: ApplicationStatus): Promise<{ modifiedCount?: number }> => {
+  const res = await fetch(`${BASE_URL}/applications/${applicationId}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ status }),
+  })
   return res.json()
 }

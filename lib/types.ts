@@ -2,6 +2,8 @@
 // Flat state — every field is a plain string, so ONE generic handler covers all inputs.
 export type JobFormData = {
   title: string
+  companyId?: string
+  recruiterId: string
   category: string
   type: string
   salaryMin: string

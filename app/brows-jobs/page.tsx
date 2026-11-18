@@ -10,9 +10,7 @@ export const metadata = {
   title: "Browse Jobs",
 }
 
-const BrowseJobsPage = async ({searchParams}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}) => {
+const BrowseJobsPage = async ({searchParams}:{searchParams: Promise<{ [key: string]: string | string[] | undefined }>}) => {
   const search = await searchParams
 
   // Turn the URL params (?search=react&location=dhaka...) into "search=react&location=dhaka..."

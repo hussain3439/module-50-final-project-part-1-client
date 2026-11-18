@@ -359,8 +359,8 @@ const JobDetailPage = async ({params}: {params: Promise<{ jobId: string }>;}) =>
                   <Separator className="my-4" />
 
                   <Button variant="outline" className="w-full">
-                    <Link href={`/dashboard/recruiter/jobs/${job._id}/applicants`}>
-                      View Applicants
+                    <Link href={`/dashboard/recruiter/jobs/${job._id}/applications`}>
+                      View Applications
                     </Link>
                   </Button>
 

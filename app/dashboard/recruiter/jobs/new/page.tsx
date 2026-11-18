@@ -6,21 +6,7 @@ import { Input } from "@/components/ui/input"
 import { createJob } from "@/lib/actions/job"
 import type { JobFormData } from "@/lib/types"
 import { useRouter } from "next/navigation"
-
-const initialJobForm: JobFormData = {
-  title: "",
-  category: "",
-  type: "",
-  salaryMin: "",
-  salaryMax: "",
-  currency: "USD",
-  location: "",
-  deadline: "",
-  responsibilities: "",
-  requirements: "",
-  benefits: "",
-  status: "active",
-}
+import { useSession } from "@/lib/auth-client"
 
 const jobCategories = [
   "Software Development",
@@ -46,9 +32,24 @@ const textareaClass =
 const labelClass = "text-sm font-medium"
 
 const NewJobPage = () => {
-  const router = useRouter();
+  const router = useRouter()
+  const { data: session } = useSession()
 
-  const [formData, setFormData] = useState<JobFormData>(initialJobForm)
+  const [formData, setFormData] = useState<JobFormData>({
+    title: "",
+    category: "",
+    recruiterId: session?.user?.id ?? "",
+    type: "",
+    salaryMin: "",
+    salaryMax: "",
+    currency: "USD",
+    location: "",
+    deadline: "",
+    responsibilities: "",
+    requirements: "",
+    benefits: "",
+    status: "active",
+  })
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -60,19 +61,23 @@ const NewJobPage = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    // TODO: POST `formData` to the backend. The server attaches status: "active"
-    // and the company from the logged-in recruiter's session.
 
-    // console.log("New job:", formData)
+    const recruiterId = session?.user?.id
 
-    const result = await createJob(formData)
-    // console.log(result, 'result is fine')
-    if (result) {
-      toast.success("Job posted successfully!")
-      router.push('/dashboard/recruiter/jobs')
+    if (!recruiterId) {
+      toast.error("Please login first!")
+      return
     }
 
-    setFormData(initialJobForm)
+    const result = await createJob({
+      ...formData,
+      recruiterId,
+    })
+
+    if (result) {
+      toast.success("Job posted successfully!")
+      router.push("/dashboard/recruiter/jobs")
+    }
   }
 
   return (
